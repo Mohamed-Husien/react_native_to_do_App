@@ -1,7 +1,8 @@
-// Home.js
+
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, FlatList, Alert, StyleSheet } from 'react-native';
 import { globalStyles } from './styles';
+import TodoItem from './TodoItem';
 
 let nextId = 1;
 
@@ -56,23 +57,7 @@ const Home = () => {
     const displayedTodos = getFilteredTodos();
 
     const renderTodoItem = ({ item }) => (
-        <TouchableOpacity onPress={() => toggleTodo(item.id)}>
-            <View style={globalStyles.todoItem}>
-                <Text
-                    style={[
-                        globalStyles.todoTitle,
-                        item.completed && { textDecorationLine: 'line-through', color: '#999' },
-                    ]}
-                >
-                    {item.title}
-                </Text>
-                {item.description ? (
-                    <Text style={globalStyles.todoDescription}>
-                        {item.description}
-                    </Text>
-                ) : null}
-            </View>
-        </TouchableOpacity>
+        <TodoItem item={item} toggleTodo={toggleTodo} />
     );
 
 
@@ -98,6 +83,8 @@ const Home = () => {
                 <Text style={globalStyles.submitButtonText}>Add Todo</Text>
             </TouchableOpacity>
 
+            <View style={globalStyles.dividerLine} />
+
             <View style={globalStyles.filterContainer}>
                 {['all', 'active', 'completed'].map((tab) => (
                     <TouchableOpacity
@@ -122,6 +109,7 @@ const Home = () => {
 
             {displayedTodos.length > 0 ? (
                 <FlatList
+                    style={{ width: '90%' }}
                     data={displayedTodos}
                     keyExtractor={(item) => item.id.toString()}
                     renderItem={renderTodoItem}
