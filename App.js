@@ -1,43 +1,30 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Provider, useDispatch } from 'react-redux';
+import { store } from './src/store/store';
+import { loadTodos } from './src/store/todosSlice';
 import BottomTabNavigator from './src/navigation/BottomTabNavigator';
 
-export default function App() {
-  const [todos, setTodos] = useState([]);
+const AppContent = () => {
+  const dispatch = useDispatch();
 
-  // Load todos from AsyncStorage on app start
   useEffect(() => {
-    const loadTodos = async () => {
-      try {
-        const storedTodos = await AsyncStorage.getItem('todos');
-        if (storedTodos) {
-          setTodos(JSON.parse(storedTodos));
-        }
-      } catch (error) {
-        console.error('Error loading todos:', error);
-      }
-    };
-    loadTodos();
-  }, []);
-
-  // Save todos to AsyncStorage 
-  useEffect(() => {
-    const saveTodos = async () => {
-      try {
-        await AsyncStorage.setItem('todos', JSON.stringify(todos));
-      } catch (error) {
-        console.error('Error saving todos:', error);
-      }
-    };
-    saveTodos();
-  }, [todos]);
+    dispatch(loadTodos());
+  }, [dispatch]);
 
   return (
     <NavigationContainer>
-      <BottomTabNavigator todos={todos} setTodos={setTodos} />
+      <BottomTabNavigator />
     </NavigationContainer>
+  );
+};
+
+export default function App() {
+  return (
+    <Provider store={store}>
+      <AppContent />
+    </Provider>
   );
 }
 

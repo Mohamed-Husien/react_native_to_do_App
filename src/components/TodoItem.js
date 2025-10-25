@@ -2,9 +2,12 @@
 
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useDispatch } from 'react-redux';
 import { globalStyles } from '../styles';
+import { toggleTodo, deleteTodo, saveTodos } from '../store/todosSlice';
 
-const TodoItem = ({ item, toggleTodo, deleteTodo, goToDetails }) => {
+const TodoItem = ({ item, goToDetails }) => {
+    const dispatch = useDispatch();
     return (
         <TouchableOpacity onPress={() => goToDetails(item)}>
             <View style={globalStyles.todoItem}>
@@ -24,14 +27,18 @@ const TodoItem = ({ item, toggleTodo, deleteTodo, goToDetails }) => {
                     ) : null}
                 </View>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <TouchableOpacity onPress={() => toggleTodo(item.id)} style={{ marginRight: 10 }}>
+                    <TouchableOpacity onPress={() => {
+                        dispatch(toggleTodo(item.id));
+                    }} style={{ marginRight: 10 }}>
                         <Ionicons
                             name={item.completed ? "checkmark-circle" : "radio-button-off"}
                             size={24}
                             color={item.completed ? "#4CAF50" : "#333"}
                         />
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => deleteTodo(item.id)}>
+                    <TouchableOpacity onPress={() => {
+                        dispatch(deleteTodo(item.id));
+                    }}>
                         <Ionicons name="trash" size={24} color="#F44336" />
                     </TouchableOpacity>
                 </View>

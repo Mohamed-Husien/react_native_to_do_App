@@ -6,11 +6,11 @@ import TodoDetails from '../screens/TodoDetails';
 
 const Stack = createNativeStackNavigator();
 
-const CompletedStack = ({ todos, setTodos }) => {
+const CompletedStack = () => {
     return (
         <Stack.Navigator screenOptions={{ headerShown: Platform.OS === 'ios' }}>
             <Stack.Screen name="Completed" options={{ title: 'Completed' }}>
-                {(props) => <Completed {...props} todos={todos} setTodos={setTodos} />}
+                {(props) => <Completed {...props} />}
             </Stack.Screen>
             <Stack.Screen name="TodoDetails" component={TodoDetails} options={{ title: 'Todo Details' }} />
         </Stack.Navigator>

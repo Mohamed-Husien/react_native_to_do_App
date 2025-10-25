@@ -6,7 +6,7 @@ import CompletedStack from './CompletedStack';
 
 const Tab = createBottomTabNavigator();
 
-const BottomTabNavigator = ({ todos, setTodos }) => {
+const BottomTabNavigator = () => {
     return (
         <Tab.Navigator
             screenOptions={({ route }) => ({
@@ -26,10 +26,10 @@ const BottomTabNavigator = ({ todos, setTodos }) => {
             })}
         >
             <Tab.Screen name="Home" options={{ headerShown: false }}>
-                {(props) => <HomeStack {...props} todos={todos} setTodos={setTodos} />}
+                {(props) => <HomeStack {...props} />}
             </Tab.Screen>
             <Tab.Screen name="Completed" options={{ headerShown: false }}>
-                {(props) => <CompletedStack {...props} todos={todos} setTodos={setTodos} />}
+                {(props) => <CompletedStack {...props} />}
             </Tab.Screen>
         </Tab.Navigator>
     );

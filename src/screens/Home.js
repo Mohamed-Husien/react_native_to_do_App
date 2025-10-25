@@ -1,13 +1,16 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, FlatList, Alert, SafeAreaView, Platform } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useSelector, useDispatch } from 'react-redux';
 import { globalStyles } from '../styles';
 import TodoItem from '../components/TodoItem';
+import { addTodo, toggleTodo, deleteTodo, saveTodos } from '../store/todosSlice';
 
 let nextId = Date.now();
 
-const Home = ({ todos, setTodos, navigation }) => {
+const Home = ({ navigation }) => {
+    const todos = useSelector((state) => state.todos.items);
+    const dispatch = useDispatch();
     // ------------------------States-----------------------
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
@@ -28,23 +31,26 @@ const Home = ({ todos, setTodos, navigation }) => {
             completed: false,
         };
 
-        setTodos(prevTodos => [newTodo, ...prevTodos]);
+        dispatch(addTodo(newTodo));
+        dispatch(saveTodos([...todos, newTodo]));
         setTitle('');
         setDescription('');
     };
 
     // Function to toggle the completion status
-    const toggleTodo = (id) => {
-        setTodos(prevTodos =>
-            prevTodos.map(todo =>
-                todo.id === id ? { ...todo, completed: !todo.completed } : todo
-            )
+    const handleToggleTodo = (id) => {
+        dispatch(toggleTodo(id));
+        const updatedTodos = todos.map(todo =>
+            todo.id === id ? { ...todo, completed: !todo.completed } : todo
         );
+        dispatch(saveTodos(updatedTodos));
     };
 
     // Function to delete a todo
-    const deleteTodo = (id) => {
-        setTodos(prevTodos => prevTodos.filter(todo => todo.id !== id));
+    const handleDeleteTodo = (id) => {
+        dispatch(deleteTodo(id));
+        const updatedTodos = todos.filter(todo => todo.id !== id);
+        dispatch(saveTodos(updatedTodos));
     };
 
     // Function to navigate to details
@@ -67,7 +73,7 @@ const Home = ({ todos, setTodos, navigation }) => {
     const displayedTodos = getFilteredTodos();
 
     const renderTodoItem = ({ item }) => (
-        <TodoItem item={item} toggleTodo={toggleTodo} deleteTodo={deleteTodo} goToDetails={goToDetails} />
+        <TodoItem item={item} toggleTodo={handleToggleTodo} deleteTodo={handleDeleteTodo} goToDetails={goToDetails} />
     );
 
 

@@ -1,21 +1,28 @@
 import React from 'react';
 import { View, Text, FlatList, SafeAreaView, Platform } from 'react-native';
+import { useSelector, useDispatch } from 'react-redux';
 import { globalStyles } from '../styles';
 import TodoItem from '../components/TodoItem';
+import { toggleTodo, deleteTodo, saveTodos } from '../store/todosSlice';
 
-const Completed = ({ todos, setTodos, navigation }) => {
+const Completed = ({ navigation }) => {
+    const todos = useSelector((state) => state.todos.items);
+    const dispatch = useDispatch();
+
     // Function to toggle the completion status
-    const toggleTodo = (id) => {
-        setTodos(prevTodos =>
-            prevTodos.map(todo =>
-                todo.id === id ? { ...todo, completed: !todo.completed } : todo
-            )
+    const handleToggleTodo = (id) => {
+        dispatch(toggleTodo(id));
+        const updatedTodos = todos.map(todo =>
+            todo.id === id ? { ...todo, completed: !todo.completed } : todo
         );
+        dispatch(saveTodos(updatedTodos));
     };
 
     // Function to delete a todo
-    const deleteTodo = (id) => {
-        setTodos(prevTodos => prevTodos.filter(todo => todo.id !== id));
+    const handleDeleteTodo = (id) => {
+        dispatch(deleteTodo(id));
+        const updatedTodos = todos.filter(todo => todo.id !== id);
+        dispatch(saveTodos(updatedTodos));
     };
 
     // Function to navigate to details
@@ -23,10 +30,10 @@ const Completed = ({ todos, setTodos, navigation }) => {
         navigation.navigate('TodoDetails', { todo: item });
     };
 
-    const completedTodos = todos.filter(todo => todo.completed);
+    const completedTodos = todos ? todos.filter(todo => todo.completed) : [];
 
     const renderTodoItem = ({ item }) => (
-        <TodoItem item={item} toggleTodo={toggleTodo} deleteTodo={deleteTodo} goToDetails={goToDetails} />
+        <TodoItem item={item} toggleTodo={handleToggleTodo} deleteTodo={handleDeleteTodo} goToDetails={goToDetails} />
     );
 
     return (
